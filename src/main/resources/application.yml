@@ -1,0 +1,61 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: github-repo-scorer
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=500,expireAfterWrite=30m
+
+logging:
+  level:
+    root: INFO
+    com.redcare.challenge.service: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+    prometheus:
+      enabled: true
+  info:
+    env:
+      enabled: true
+    git:
+      enabled: true
+    build:
+      enabled: true
+
+github:
+  api:
+    base-url: https://api.github.com
+    path: /search/repositories
+
+scoring:
+  weights:
+    stars: 4.0
+    forks: 3.0
+    recency: 0.3
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+  javadoc:
+    enabled: true
+    packages-to-scan: com.redcare.githubscoring
+  show-actuator: true
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json

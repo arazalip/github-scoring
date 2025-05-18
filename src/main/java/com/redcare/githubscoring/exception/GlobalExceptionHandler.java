@@ -1,5 +1,6 @@
 package com.redcare.githubscoring.exception;
 
+import jakarta.servlet.ServletException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -71,9 +72,11 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> handleUnknownException(Exception ex) {
+    public ResponseEntity<Map<String, Object>> handleUnknownException(Exception ex) throws Exception {
+        if (ex instanceof ServletException) {
+            throw ex; //let spring-web handle it
+        }
         log.error("Unknown Exception", ex);
-
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now());
         body.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
